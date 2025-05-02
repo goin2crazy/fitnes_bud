@@ -5,101 +5,134 @@ import mediapipe as mp
 import numpy as np
 
 
-def one_squat():
-    """
-    Visualizes pose landmarks from a camera feed and detects one squat.
-    """
-    # Initialize MediaPipe Pose solution
-    mp_pose = mp.solutions.pose
-    pose = mp_pose.Pose(static_image_mode=False,  # Changed to False for video stream
-                        min_detection_confidence=0.5,
-                        min_tracking_confidence=0.5)
-    mp_drawing = mp.solutions.drawing_utils
+class ExersicesBase(): 
+    def __init__(self,
+                 required_count: int = 10, 
+                callbacks = []): 
+        self.name = 'base'
 
-    # Open the default camera
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("Cannot open camera")
-        exit()
+        self.mp_pose = mp.solutions.pose
+        self.pose = self.mp_pose.Pose(static_image_mode=False,  # Changed to False for video stream
+                            min_detection_confidence=0.5,
+                            min_tracking_confidence=0.5)
+        self.mp_drawing = mp.solutions.drawing_utils
 
-    # Get the frame dimensions from the camera
-    ret, frame = cap.read()  # Read a frame to get its dimensions
-    if not ret:
-        print("Error reading frame from camera")
-        cap.release()
-        return  # Exit the function if no frame is read
+        self.required_count = required_count
+        self.callbacks = callbacks
+        self.count = 0 
 
-    frame_height, frame_width = frame.shape[:2] # Get height and width
+    def visualize_pose(self, frame, results, *args, **kwargs): 
+        self.mp_drawing.draw_landmarks(frame, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)
 
-    down = False
-    up = False
-    squat_count = 0 # Initialize squat counter
+    def process_frame(self, pose_landmarks, frame,  *args, **kwargs): 
+        return False 
+    
+    def process_done(self, pose_landmarks, frame,  *args, **kwargs): 
+        return 
 
-    while True:
-        # Read a frame from the camera
-        ret, frame = cap.read()
+    def run(self): 
+        
+        # Open the default camera
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            print("Cannot open camera")
+            exit()
+
+        # Get the frame dimensions from the camera
+        ret, frame = cap.read()  # Read a frame to get its dimensions
         if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
-            break
+            print("Error reading frame from camera")
+            cap.release()
+            return  # Exit the function if no frame is read
 
-        # Flip the frame horizontally for a more natural selfie view
-        frame = cv2.flip(frame, 1)
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        self.frame_height, self.frame_width = frame.shape[:2] # Get height and width
 
-        # Process the frame with MediaPipe Pose
-        results = pose.process(rgb_frame)
+        while True:
+            # Read a frame from the camera
+            ret, frame = cap.read()
+            if not ret:
+                print("Can't receive frame (stream end?). Exiting ...")
+                break
 
-        # Draw the pose landmarks
-        if results.pose_landmarks:
-            mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            # Flip the frame horizontally for a more natural selfie view
+            frame = cv2.flip(frame, 1)
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            ps = results.pose_landmarks.landmark
-            # Check for "down" position.  Using hips (23,24) and knees (25,26) is more robust.
-            if all([True if landmark.y > 0.5 else False for landmark in ps[0:22]]):
-                down = True
+            # Process the frame with MediaPipe Pose
+            results = self.pose.process(rgb_frame)
 
-            # Check for "up" position, only if we were in the down position
-            if down == True:
-                if all([True if landmark.y < 0.5 else False for landmark in ps[0:22]]):
-                    up=True 
+            if results.pose_landmarks:
+                self.visualize_pose(frame, results) 
+                
+                done = self.process_frame(results.pose_landmarks, frame)
 
-        # Draw the line
-        if not down and not up:
+            if done: 
+                self.count += 1
+                for callback in self.callbacks: 
+                    callback(self.count, frame)
+
+                self.process_done(results.pose_landmarks, frame)
+
+                if self.count >= self.required_count: 
+                    break   
+            
+            
+            # Display the squat count
+            cv2.putText(frame, f"{self.name} count: {self.count}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+            # Display the resulting frame
+            cv2.imshow('Pose Comparison', frame)
+
+                # Press q to quit
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        # Release the camera and destroy all windows
+        cap.release()
+        self.pose.close() # Close the pose instance.
+        cv2.destroyAllWindows()
+
+class SquatExsercise(ExersicesBase): 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs) 
+        self.name = 'Squat'
+
+        self.down = False 
+        self.up = False 
+
+    def process_frame(self, pose_landmarks, frame):
+        ps = pose_landmarks.landmark
+        # Check for "down" position.  Using hips (23,24) and knees (25,26) is more robust.
+        if all([True if landmark.y > 0.5 else False for landmark in ps[0:22]]):
+            self.down = True
+
+        # Check for "up" position, only if we were in the down position
+        if self.down == True:
+            if all([True if landmark.y < 0.5 else False for landmark in ps[0:22]]):
+                self.up=True 
+
+                # Draw the line
+        if not self.down and not self.up:
             line_color = (0, 0, 255)  # Red
-        elif down and not up:
+        elif self.down and not self.up:
             line_color = (0, 255, 255)  # Yellow
-        elif down and up:
+        elif self.down and self.up:
             line_color = (0, 255, 0)  # Green
-            cv2.line(frame, (0, int(frame_height * 0.5)), (int(frame_width), int(frame_height * 0.5)), line_color, 5)
+            cv2.line(frame, (0, int(self.frame_height * 0.5)), (int(self.frame_width), int(self.frame_height * 0.5)), line_color, 5)
             sleep(0.5)
 
-
-        cv2.line(frame, (0, int(frame_height * 0.5)), (int(frame_width), int(frame_height * 0.5)), line_color, 5)
-
-        # Display the squat count
-        cv2.putText(frame, f"Squats: {squat_count}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-
-
-        # Display the resulting frame
-        cv2.imshow('Pose Comparison', frame)
+            # Done 
+            self.down = False 
+            self.up = False 
+            return True 
 
 
-        # Increment squat count
-        if down and up:
-            squat_count += 1
-            down = False  # Reset for next squat
-            up = False    # Reset up
-
-        # Press q to quit
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    # Release the camera and destroy all windows
-    cap.release()
-    pose.close() # Close the pose instance.
-    cv2.destroyAllWindows()
+        cv2.line(frame, (0, int(self.frame_height * 0.5)), (int(self.frame_width), int(self.frame_height * 0.5)), line_color, 5)
+        return False 
 
 
 
 if __name__ == "__main__":
-    one_squat() # Run it once.  Removed the loop.
+
+    ex = SquatExsercise(random.randint(1,5)) # Run it once.  Removed the loop.
+    ex.run()
