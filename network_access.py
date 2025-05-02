@@ -30,7 +30,7 @@ def disable_internet():
                 check=True
             )
         except subprocess.CalledProcessError:
-            print("Hubby couldn’t disable it 😢 Maybe wrong name or no admin rights?")
+            print("Assistant couldn’t disable it 😢 Maybe wrong name or no admin rights?")
 
 # 💖 Enable internet
 def enable_internet():

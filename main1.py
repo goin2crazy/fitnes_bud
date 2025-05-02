@@ -23,7 +23,7 @@ def break_routine():
 # 🕒 Run every hour
 schedule.every(1).hours.do(break_routine)
 
-print("Hubby is watching the time 🥰 Will make sure you stay healthy & focused~")
+print("Assistant is watching the time 🥰 Will make sure you stay healthy & focused~")
 while True:
     schedule.run_pending()
     time.sleep(1)
