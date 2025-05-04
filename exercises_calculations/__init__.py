@@ -1,0 +1,1 @@
+from .squats import SquatExsercise
