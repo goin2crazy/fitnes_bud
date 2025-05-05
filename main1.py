@@ -40,7 +40,7 @@ def passed_routine_warning():
                       emotion="proud") # Added image path
 
 # 🕒 Run every hour
-schedule.every(1).hours.do(break_routine)
+schedule.every().hour.at(":00").hours.do(break_routine)
 
 # ⏰ Schedule a warning 15 minutes before each hourly break
 schedule.every().hour.at(":15").do(passed_routine_warning)
