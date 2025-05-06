@@ -15,7 +15,7 @@ def do_squats():
 
 
 def rest_in_mind(): 
-    time.sleep(10 * 60)  # Rest mind for 10 minutes  💪
+    time.sleep(5 * 60)  # Rest mind for 10 minutes  💪
 
 # 🌸 Full rest routine
 def break_routine():
@@ -36,16 +36,19 @@ def upcoming_break_warning():
 
 
 def passed_routine_warning():
-    send_notification("How are you feeling?", "Stay concentrated, its already 15 minutes with laptop!", 
+    send_notification("How are you feeling?", "Stay concentrated~!", 
                       emotion="proud") # Added image path
 
 # 🕒 Run every hour
 schedule.every().hour.at(":00").hours.do(break_routine)
 
 # ⏰ Schedule a warning 15 minutes before each hourly break
-schedule.every().hour.at(":15").do(passed_routine_warning)
+schedule.every().hour.at(":25").do(passed_routine_warning)
 schedule.every().hour.at(":45").do(upcoming_break_warning)
 
+
+# In case if pc left with internet access disabled
+enable_internet() 
 send_notification("App started", "Assistant is watching the time 🥰 Will make sure you stay healthy & focused~", 
                   emotion="happy")
 while True:
