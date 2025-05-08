@@ -1,9 +1,8 @@
+import yaml 
 import platform
 
 # depends on windows version 
 # there can be win11toast, win10toast, and others 
-from win11toast import toast
-
 image_emotions = {
     "happy": "images/happy.ico", 
     "thankfull": "images/happy.ico", 
@@ -13,6 +12,17 @@ image_emotions = {
     "pouty": "images/pouty.ico", 
     "warning": "images/warning.ico"
 }
+
+def load_config(config_path="config.yaml"):
+    try:
+        with open(config_path, 'r') as f:
+            return yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"Error: Configuration file '{config_path}' not found.")
+        return {}
+    except yaml.YAMLError as e:
+        print(f"Error parsing configuration file '{config_path}': {e}")
+        return {}
 
 
 def send_notification(title, message, emotion=False):
