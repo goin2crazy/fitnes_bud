@@ -33,7 +33,7 @@ class ExersicesBase():
 
         print(config)
         if required_count == None: 
-            self.required_count = random.randint(config['normal_count']-3, config['normal_count']-2)
+            self.required_count = random.randint(config['normal_count']-3, config['normal_count']+2)
         elif type(required_count) == int: 
             self.required_count = required_count
 

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Budy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter, or replace with a preferred font */
+            background-color: #1a202c; /* Soft dark background */
+            color: #e2e8f0; /* Light grey text */
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            /* width: 100%; */
+            max-width: 800px; /* Max width for larger screens */
+            background-color: #2d3748; /* Slightly lighter dark background for the container */
+            border-radius: 12px; /* Rounded corners */
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #4a5568; /* Soft border */
+            margin-bottom: 20px;
+        }
+
+        .header-nav a {
+            color: #a0aec0; /* Soft grey for links */
+            text-decoration: none;
+            margin-right: 20px;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .header-nav a:hover {
+            color: #e2e8f0; /* Lighter on hover */
+        }
+
+        .header-close {
+            color: #a0aec0; /* Soft grey for close button */
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .header-close:hover {
+             color: #e53e3e; /* Reddish on hover */
+        }
+
+        .main-content-area {
+            display: flex;
+            flex-direction: column; /* Stack on small screens */
+            gap: 20px; /* Space between main section and sidebar */
+        }
+
+        @media (min-width: 768px) { /* Apply flex layout on medium screens and up */
+            .main-content-area {
+                flex-direction: row;
+            }
+        }
+
+
+        .main-section {
+            flex-grow: 1;
+        }
+
+        .sidebar {
+            width: 100%; /* Full width on small screens */
+            border-top: 1px solid #4a5568; /* Soft border on top for small screens */
+            padding-top: 20px;
+        }
+
+         @media (min-width: 768px) { /* Adjust sidebar width and add left border on medium screens and up */
+            .sidebar {
+                width: 250px; /* Adjust width as needed */
+                border-top: none;
+                border-left: 1px solid #4a5568; /* Soft border on left */
+                padding-top: 0;
+                padding-left: 20px;
+            }
+        }
+
+        h1, h3 {
+            color: #edf2f7; /* Lighter headings */
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .exercise-section {
+            margin-bottom: 30px;
+        }
+
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            background-color: #4a5568; /* Darker background for items */
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px; /* Rounded corners for items */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for items */
+        }
+
+        .exercise-name {
+            flex-grow: 1;
+            font-weight: 600; /* Semi-bold */
+        }
+
+        .required-count {
+            margin-right: 15px;
+            color: #a0aec0; /* Soft grey */
+            font-size: 0.9em;
+        }
+
+        .how-to-link a {
+            color: #63b3ed; /* Soft blue */
+            text-decoration: none;
+            margin-right: 15px;
+            transition: color 0.2s ease-in-out;
+        }
+
+         .how-to-link a:hover {
+            color: #90cdf4; /* Lighter blue on hover */
+         }
+
+        .remove-button {
+            color: #fc8181; /* Soft red */
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: color 0.2s ease-in-out;
+        }
+
+         .remove-button:hover {
+            color: #e53e3e; /* Darker red on hover */
+         }
+
+
+        .exercises-status h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(20px, 1fr)); /* Responsive grid */
+            gap: 5px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+
+        .status-circle {
+            width: 15px;
+            height: 15px;
+            background-color: #63b3ed; /* Soft blue for status */
+            border-radius: 50%;
+            opacity: 0.7; /* Slightly transparent */
+        }
+
+        .fitness-breaks h3 {
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .legend div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #a0aec0; /* Soft grey */
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 4px; /* Slightly rounded legend colors */
+        }
+
+        .reminder-color { background-color: #fc8181; } /* Soft red */
+        .warning-color { background-color: #f6e05e; } /* Soft yellow */
+        .fitness-break-color { background-color: #68d391; } /* Soft green */
+
+        .timeline {
+            width: 100%;
+            height: 15px;
+            background-color: #4a5568; /* Darker background for timeline */
+            margin-top: 10px;
+            border-radius: 8px; /* Rounded timeline */
+            overflow: hidden; /* Hide overflow from colored segments */
+            display: flex; /* Use flex for segments */
+        }
+
+         .timeline div {
+             height: 100%;
+         }
+
+         .timeline .segment-reminder { background-color: #fc8181; width: 20%; } /* Example width */
+         .timeline .segment-warning { background-color: #f6e05e; width: 10%; } /* Example width */
+         .timeline .segment-break { background-color: #68d391; width: 15%; } /* Example width */
+         /* Add more segments as needed */
+
+         .next-exercise-time {
+             margin-top: 20px;
+             font-size: 1em;
+             color: #a0aec0; /* Soft grey */
+         }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-nav">
+                <a href="#">Source code</a>
+                <a href="#">Q&A</a>
+                <a href="#">Authors</a>
+                <a href="#">Donate</a>
+            </div>
+            <a href="#" class="header-close">X</a>
+        </div>
+
+        <div class="main-content-area">
+            <div class="main-section">
+                <h1>Hello, its is fitness budy :3</h1>
+
+                <div class="exercise-section">
+                    <h3>Base level exercises (Every hour):</h3>
+                    <div class="exercise-item">
+                        <span class="exercise-name">Squats</span>
+                        <span class="required-count">Required count: 10</span>
+                        <span class="how-to-link"><a href="#">How to?</a></span>
+                        <span class="remove-button">X</span>
+                    </div>
+                    </div>
+
+                <div class="exercise-section">
+                    <h3>Mid level exercises (Every day):</h3>
+                    <div class="exercise-item">
+                        <span class="exercise-name">Planka</span>
+                        <span class="required-count">Required count: 8</span>
+                        <span class="how-to-link"><a href="#">How to?</a></span>
+                        <span class="remove-button">X</span>
+                    </div>
+                     <div class="exercise-item">
+                        <span class="exercise-name">Push Ups</span>
+                        <span class="required-count">Required count: 8</span> <span class="how-to-link"><a href="#">How to?</a></span>
+                        <span class="remove-button">X</span>
+                    </div>
+                    </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="exercises-status">
+                    <h3>exercises status</h3>
+                    <p class="text-sm text-gray-400">MONTHLY &lt; May &gt;</p>
+                    <div class="status-grid">
+
+                         
+                        {% if activity_frequency_colors %}
+                                {% for r, g, b in activity_frequency_colors %}
+                                    <div class="status-circle"
+                                        style="background-color: rgb({{ r }}, {{ g }}, {{ b }});">
+                                    </div>
+                                {% endfor %}
+                        {% else %}
+                            <p>No activity frequency data available.</p>
+                        {% endif %}
+
+                        </div>
+                    <p class="text-sm text-gray-400">Average exercises per day: 10</p>
+                </div>
+
+                <div class="fitness-breaks">
+                    <h3>Fitness breaks timing:</h3>
+                    <div class="legend">
+                        <div><span class="legend-color reminder-color"></span> Reminder to stay concentrated</div>
+                        <div><span class="legend-color warning-color"></span> Warning about upcoming fitness break</div>
+                        <div><span class="legend-color fitness-break-color"></span> Fitness break</div>
+                    </div>
+                    <div class="timeline">
+                         <div class="segment-reminder"></div>
+                         <div class="segment-warning"></div>
+                         <div class="segment-break"></div>
+                         </div>
+                </div>
+
+                 <p class="next-exercise-time">Mid level exercises at 17.30</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

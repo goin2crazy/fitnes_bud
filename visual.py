@@ -1,120 +1,163 @@
-import tkinter as tk
-from PIL import Image, ImageTk
+# app.py
+import json
+from flask import Flask, render_template, request
 import os
+import pandas as pd 
 
-def crop_and_resize_image(image_path, target_size=(200, 200)):
+from utils import load_config 
+
+
+app = Flask(__name__)
+
+# Get the absolute path of the directory where this script is located
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+JSON_FILE_PATH = os.path.join(BASE_DIR, 'data.json')
+
+def sum_count_per_day_dict(df: pd.DataFrame) -> dict:
     """
-    Crops and resizes the image to the specified target size.  Handles errors
-    if the file doesn't exist or isn't a valid image.
+    Calculates the sum of the 'count' column per day and returns it as a dictionary.
+
+    Assumes the input DataFrame has columns named 'timestamp' and 'count'.
 
     Args:
-        image_path (str): Path to the image file.
-        target_size (tuple, optional): The target size (width, height).
-            Defaults to (200, 200).
+        df: A pandas DataFrame with 'timestamp' (datetime or convertible)
+            and 'count' (numeric) columns.
 
     Returns:
-        Image.Image: The cropped and resized image, or None on error.
+        A dictionary where keys are dates (as pandas Timestamps) and
+        values are the sum of 'count' for that day.
     """
+    # Ensure the 'timestamp' column is in datetime format
+    df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+
+    # Drop rows where timestamp conversion failed
+    df.dropna(subset=['timestamp'], inplace=True)
+
+    # Set the timestamp as the index
+    df = df.set_index('timestamp')
+
+    # Resample by day ('D') and calculate the sum of the 'count' column
+    daily_sum_series = df['count'].resample('D').sum()
+
+    # Convert the pandas Series to a dictionary
+    daily_sum_dict = daily_sum_series.to_dict()
+
+    return daily_sum_dict
+
+# --- New function to load activity frequency ---
+def load_activity_frequency():
+    """
+    Simulates loading activity frequency data.
+    Returns a list of RGB color tuples.
+    Example: [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+    """
+    try: 
+        config = load_config()
+        dataset_path = config['dataset_path']
+        
+        if dataset_path.endswith("json"): 
+            dataset = pd.read_json(dataset_path)
+        elif dataset_path.endswith("csv"): 
+            dataset = pd.read_csv(dataset_path)
+        else: 
+            assert ("Dataset is incorrect format")
+
+        last_month_counts = sum_count_per_day_dict(dataset)
+        print(last_month_counts)
+
+        last_month_counts = list(last_month_counts.values())[-30:]
+        
+        max_count = max(last_month_counts)
+        last_month_counts_normalized = [i/max_count for i in last_month_counts]
+
+        last_month_counts_to_color = [(int(50+100* i), int(255*i), int(255*i)) for i in last_month_counts_normalized]
+
+        return last_month_counts_to_color
+        
+    except Exception as e: 
+        print(e)
+        return [
+            (15, 15, 15),
+        ]
+
+# --- New function to load activity types ---
+def load_activities_types():
+    """
+    Simulates loading activity types.
+    Returns a dictionary categorizing activities.
+    """
+    return {
+        "Warm-up": ["Jumping Jacks", "Arm Circles", "Leg Swings"],
+        "Strength - Lower Body": ["Squats", "Lunges", "Deadlifts (Bodyweight)"],
+        "Strength - Upper Body": ["Push-ups", "Pull-up Assists", "Dips (Chair)"],
+        "Core": ["Plank", "Crunches", "Russian Twists"],
+        "Cool-down": ["Static Stretching", "Foam Rolling"]
+    }
+
+def load_data():
+    """Loads general app data (like settings) from the JSON file."""
     try:
-        image = Image.open(image_path)
-        # Use a more robust method to find the center and crop
-        width, height = image.size
-        left = (width - target_size[0]) / 2
-        top = (height - target_size[1]) / 2
-        right = (width + target_size[0]) / 2
-        bottom = (height + target_size[1]) / 2
-
-        # Ensure the crop coordinates are valid
-        left = max(0, left)
-        top = max(0, top)
-        right = min(width, right)
-        bottom = min(height, bottom)
-        cropped_image = image.crop((left, top, right, bottom))
-        resized_image = cropped_image.resize(target_size, Image.LANCZOS)  # Use LANCZOS for high-quality resizing
-        return resized_image
+        with open(JSON_FILE_PATH, 'r') as f:
+            data = json.load(f)
+        return data
     except FileNotFoundError:
-        print(f"Error: Image file not found at {image_path}")
-        return None
+        # If the file doesn't exist, create it with default settings
+        print(f"{JSON_FILE_PATH} not found. Creating with default settings.")
+        default_data = {
+            "title": "My App Data",
+            "settings": {
+                "theme": "light",
+                "notifications": False
+            }
+        }
+        save_data(default_data) # Save it so it exists for next time
+        return default_data
+    except json.JSONDecodeError:
+        return {"error": "Error decoding data.json. Please check its format."}
+
+def save_data(data):
+    """Saves general app data to the JSON file."""
+    try:
+        with open(JSON_FILE_PATH, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
     except Exception as e:
-        print(f"Error processing image: {e}")
-        return None
+        print(f"Error saving data: {e}")
+        return False
 
-def create_sliding_window(root, image_path):
-    """
-    Creates a toplevel window with the given image, which slides in from the
-    bottom right corner of the screen.
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    app_config_data = load_data()
 
-    Args:
-        root (tk.Tk): The main Tkinter root window.  This is needed to get
-            the screen dimensions, but the toplevel window is created
-            independently of it.
-        image_path (str): Path to the image file.
-    """
+    if request.method == 'POST':
+        if 'settings.theme' in request.form:
+            new_theme = request.form['settings.theme']
+            if 'settings' not in app_config_data:
+                app_config_data['settings'] = {}
+            app_config_data['settings']['theme'] = new_theme
 
-    # Get screen dimensions
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+        notifications_enabled = 'settings.notifications' in request.form
+        if 'settings' not in app_config_data:
+            app_config_data['settings'] = {}
+        app_config_data['settings']['notifications'] = notifications_enabled
 
-    # Initial position of the window (off-screen, bottom right)
-    x = screen_width
-    y = screen_height
-
-    # Create the toplevel window.  It is created as a child of the root,
-    # but it is positioned and behaves independently.
-    sliding_window = tk.Toplevel(root)
-    sliding_window.overrideredirect(True)  # Remove window decorations (title bar, etc.)
-    sliding_window.geometry(f"{200}x{200}+{x}+{y}")  # Set initial size and position
-
-    # Load and process the image
-    resized_image = crop_and_resize_image(image_path)
-    if resized_image is None:
-        # Handle the error case where the image couldn't be loaded.
-        # We destroy the toplevel window to prevent a broken UI.
-        sliding_window.destroy()
-        return
-
-    # Convert the PIL image to a Tkinter PhotoImage
-    tk_image = ImageTk.PhotoImage(resized_image)
-    image_label = tk.Label(sliding_window, image=tk_image)
-    image_label.image = tk_image  # Keep a reference to prevent garbage collection
-    image_label.pack()
-
-    # Set the window to be always on top
-    sliding_window.attributes('-topmost', True)
-
-    def slide_in():
-        """
-        Slides the window into view from the bottom right corner.
-        """
-        nonlocal x, y
-        x -= 5  # Adjust the speed of the slide-in by changing the decrement value
-        y -= 5  # Adjust the speed of the slide-in by changing the decrement value
-        if x > screen_width - 200 and y > screen_height - 200:
-            sliding_window.geometry(f"{200}x{200}+{x}+{y}")
-            sliding_window.after(10, slide_in)  # Continue sliding
+        if save_data(app_config_data):
+            app_config_data = load_data()
         else:
-            sliding_window.geometry(f"{200}x{200}+{screen_width - 200}+{screen_height - 200}") #set the final position
+            if 'error' not in app_config_data:
+                 app_config_data['error_saving'] = "Could not save settings."
 
-    # Start the slide-in animation after a delay
-    sliding_window.after(500, slide_in)  # Start sliding after 0.5 seconds
+    activity_colors = load_activity_frequency()
+    activity_categories = load_activities_types()
 
-def main():
-    """
-    Main function to create the Tkinter application and start the sliding window.
-    """
-    root = tk.Tk()
-    root.withdraw()  # Hide the main root window
-    # Provide a default image path.  The user should replace this with the
-    # actual path to their "kim.png" image.
-    image_path = "character.png"  # <--- Replace with the actual path to your image
-    if not os.path.exists(image_path):
-        print(f"Error: Image file not found at {image_path}.  Please make sure the file exists.")
-        # Optionally, you could create a dummy image here, or display an error message
-        # in a Tkinter window.  For simplicity, we just exit.
-        return
+    return render_template(
+        'main_page.html',
+        app_data=app_config_data,
+        activity_frequency_colors=activity_colors,
+        activity_types_data=activity_categories
+    )
 
-    create_sliding_window(root, image_path)
-    root.mainloop()  # Keep the Tkinter event loop running (though the main window is hidden)
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    # Ensure you have a 'templates' directory with 'index.html' in it,
+    # and a 'data.json' file in the same directory as app.py before running.
+    app.run(debug=True)
