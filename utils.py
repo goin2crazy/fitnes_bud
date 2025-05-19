@@ -25,6 +25,24 @@ def load_config(config_path="config.yaml"):
         return {}
 
 
+
+# Define the save_config function
+def save_config(config_data, filepath="config.yaml"):
+    """Saves configuration data to a YAML file."""
+    try:
+        with open(filepath, 'w') as f:
+            yaml.dump(config_data, f, default_flow_style=False)
+        print(f"Config saved successfully to {filepath}")
+    except yaml.YAMLError as e:
+        print(f"Error saving config file {filepath}: {e}")
+        # Handle save error (e.g., log it, return False)
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred saving config file {filepath}: {e}")
+        return False
+    return True # Indicate success
+
+
 def send_notification(title, message, emotion=False):
     """Sends a desktop notification on Windows."""
     if platform.system() == "Windows":

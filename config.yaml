@@ -1,7 +1,6 @@
-dataset_path: "exercises_dataset.json"
-normal_count: 10 
-
-break_time: "00"
-warning_time: "55"
-reminder_time: "25"
+break_time: '05'
+dataset_path: exercises_dataset.json
+normal_count: 10
+reminder_time: '25'
 time_check_rate: 25
+warning_time: '55'

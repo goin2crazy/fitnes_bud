@@ -195,9 +195,74 @@
             border-radius: 4px; /* Slightly rounded legend colors */
         }
 
+        
         .reminder-color { background-color: #fc8181; } /* Soft red */
         .warning-color { background-color: #f6e05e; } /* Soft yellow */
         .fitness-break-color { background-color: #68d391; } /* Soft green */
+
+        .legend-item-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .timing-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between time/input and button */
+        }
+
+        .timing-value {
+            font-weight: bold;
+        }
+
+        .edit-button, .save-button {
+            background-color: transparent; /* No background */
+            color: #a0aec0; /* Soft grey icon color */
+            border: none;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em; /* Icon size */
+            transition: color 0.2s ease-in-out;
+        }
+
+        .edit-button:hover, .save-button:hover {
+            color: #63b3ed; /* Soft blue on hover */
+        }
+
+         .timing-input {
+            background-color: #4a5568; /* Darker background for input */
+            color: #e2e8f0; /* Light text for input */
+            border: 1px solid #63b3ed; /* Soft blue border */
+            padding: 4px;
+            border-radius: 4px;
+            width: 60px; /* Adjust width as needed */
+            font-size: 0.9em;
+         }
+
+        .submit-button {
+            background-color: #68d391; /* Soft green */
+            color: #1a202c; /* Dark text */
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .submit-button:hover {
+            background-color: #48bb78; /* Darker green on hover */
+        }
+        
+        .submit-button:hover {
+            background-color: #48bb78; /* Darker green on hover */
+        }
+
 
         .timeline {
             width: 100%;
@@ -222,6 +287,13 @@
              margin-top: 20px;
              font-size: 1em;
              color: #a0aec0; /* Soft grey */
+         }
+
+         .restart-message {
+             margin-top: 15px;
+             font-size: 0.8em;
+             color: #a0aec0; /* Soft grey */
+             text-align: center;
          }
 
     </style>
@@ -270,42 +342,193 @@
 
             <div class="sidebar">
                 <div class="exercises-status">
-                    <h3>exercises status</h3>
-                    <p class="text-sm text-gray-400">MONTHLY &lt; May &gt;</p>
+                    <h3>Exercises activity history last 30 days </h3>
+                    <!-- <p class="text-sm text-gray-400">MONTHLY &lt; May &gt;</p> -->
                     <div class="status-grid">
 
                          
                         {% if activity_frequency_colors %}
-                                {% for r, g, b in activity_frequency_colors %}
+                                {% for r, g, b in activity_frequency_colors['month_count'] %}
                                     <div class="status-circle"
                                         style="background-color: rgb({{ r }}, {{ g }}, {{ b }});">
                                     </div>
                                 {% endfor %}
+
+
                         {% else %}
                             <p>No activity frequency data available.</p>
                         {% endif %}
 
                         </div>
-                    <p class="text-sm text-gray-400">Average exercises per day: 10</p>
-                </div>
+                    
+                    {% if activity_frequency_colors %}
+                    
+                    <h3 class="text-sm text-gray-400"> Max - {{activity_frequency_colors['max']['count']}}</h3>
+                    <h3 class="text-sm text-gray-400"> Min - {{activity_frequency_colors['min']['count']}}</h3>
 
+                    {% endif %}
+
+                    <p class="text-sm text-gray-400">Average exercises per day: {{activity_frequency_colors['average']}}</p>
+                </div>
                 <div class="fitness-breaks">
                     <h3>Fitness breaks timing:</h3>
                     <div class="legend">
-                        <div><span class="legend-color reminder-color"></span> Reminder to stay concentrated</div>
-                        <div><span class="legend-color warning-color"></span> Warning about upcoming fitness break</div>
-                        <div><span class="legend-color fitness-break-color"></span> Fitness break</div>
+                        <div data-break-type="reminder">
+                            <span class="legend-color reminder-color"></span>
+                            <span class="legend-item-content">
+                                Reminder to stay concentrated every hour at 
+                                <span class="timing-controls">
+                                    <span class="timing-value">{{app_data['reminder_time']}}</span>
+                                    <button class="edit-button" title="Edit Timing">✎</button>
+                                </span>
+                            </span>
+                        </div>
+                        <div data-break-type="warning">
+                            <span class="legend-color warning-color"></span>
+                            <span class="legend-item-content">
+                                Warning about upcoming fitness break every hour at 
+                                <span class="timing-controls">
+                                    <span class="timing-value">{{app_data['warning_time']}}</span>
+                                    <button class="edit-button" title="Edit Timing">✎</button>
+                                </span>
+                            </span>
+                        </div>
+                        <div data-break-type="fitness-break">
+                            <span class="legend-color fitness-break-color"></span>
+                            <span class="legend-item-content">
+                                Fitness break every hour at
+                                <span class="timing-controls">
+                                    <span class="timing-value">{{app_data['break_time']}}</span>
+                                    <button class="edit-button" title="Edit Timing">✎</button>
+                                </span>
+                            </span>
+                        </div>
                     </div>
-                    <div class="timeline">
-                         <div class="segment-reminder"></div>
-                         <div class="segment-warning"></div>
-                         <div class="segment-break"></div>
-                         </div>
+
+                    <button class="submit-button">Submit Timing Changes</button>
+
+                    <p class="restart-message">Changes will activate after PC restart.</p>
                 </div>
 
                  <p class="next-exercise-time">Mid level exercises at 17.30</p>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const editButtons = document.querySelectorAll('.edit-button');
+            const submitButton = document.querySelector('.submit-button');
+
+            // Function to create an input field and save button
+            function createEditInput(currentValue) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.classList.add('timing-input');
+                input.value = currentValue;
+
+                const saveButton = document.createElement('button');
+                saveButton.classList.add('save-button');
+                saveButton.textContent = '✔'; // Save icon
+                saveButton.title = 'Save Timing';
+
+                return { input, saveButton };
+            }
+
+            // Add event listeners to each edit button
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const timingControls = this.closest('.timing-controls');
+                    const timingValueSpan = timingControls.querySelector('.timing-value');
+                    const currentEditButton = this;
+
+                    // Get the current time value
+                    const currentTime = timingValueSpan.textContent;
+
+                    // Create the input and save button
+                    const { input, saveButton } = createEditInput(currentTime);
+
+                    // Hide the current time span and edit button
+                    timingValueSpan.style.display = 'none';
+                    currentEditButton.style.display = 'none';
+
+                    // Append the input and save button to the timing controls
+                    timingControls.appendChild(input);
+                    timingControls.appendChild(saveButton);
+
+                    // Focus on the input field
+                    input.focus();
+
+                    // Add event listener to the newly created save button
+                    saveButton.addEventListener('click', function() {
+                        const newTime = input.value.trim();
+
+                        // Update the timing value span
+                        timingValueSpan.textContent = newTime;
+
+                        // Show the timing value span and original edit button
+                        timingValueSpan.style.display = '';
+                        currentEditButton.style.display = '';
+
+                        // Remove the input and save button
+                        input.remove();
+                        saveButton.remove();
+                    });
+
+                    // Optional: Allow saving with Enter key in the input field
+                    input.addEventListener('keypress', function(event) {
+                        if (event.key === 'Enter') {
+                            saveButton.click(); // Trigger the save button click
+                        }
+                    });
+                });
+            });
+
+            // Add event listener to the submit button
+            submitButton.addEventListener('click', function() {
+                const legendItems = document.querySelectorAll('.legend > div');
+                const timingData = {};
+
+                legendItems.forEach(item => {
+                    const breakType = item.dataset.breakType;
+                    // Get the current displayed timing value (either from span or input if visible)
+                    const timingValueSpan = item.querySelector('.timing-value');
+                    const timingInput = item.querySelector('.timing-input'); // Check if input exists
+
+                    let currentTime;
+                    if (timingInput && timingInput.style.display !== 'none') {
+                         currentTime = timingInput.value.trim();
+                    } else {
+                         currentTime = timingValueSpan.textContent.trim();
+                    }
+
+                    timingData[breakType] = currentTime;
+                });
+
+                console.log('Simulating sending timing data:', timingData);
+
+                // In a real application, use fetch() or XMLHttpRequest here
+                fetch('/changetiming/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(timingData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Timing changes submitted successfully!'); // Success message
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Failed to submit timing changes.'); // Error message
+                });
+
+                 // You could add a confirmation message here
+                // alert('Timing changes submitted (simulated). Check console for data.');
+            });
+        });
+    </script>
 </body>
 </html>
