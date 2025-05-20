@@ -33,7 +33,6 @@ while True:
     if results.pose_landmarks:
         mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
-    print()
 
     # Display the resulting frame
     cv2.imshow('MediaPipe Pose', frame)

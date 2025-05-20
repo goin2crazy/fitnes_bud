@@ -128,16 +128,16 @@ class ExersicesBase():
 
                 done = self.process_frame(results.pose_landmarks, frame)
 
-            if done:
-                self.count += 1
-                for callback in self.callbacks:
-                    callback(self.count, frame)
+                if done:
+                    self.count += 1
+                    for callback in self.callbacks:
+                        callback(self.count, frame)
 
-                self.process_done(results.pose_landmarks, frame)
+                    self.process_done(results.pose_landmarks, frame)
 
-                if self.count >= self.required_count:
-                    self.end_time = time()
-                    break
+                    if self.count >= self.required_count:
+                        self.end_time = time()
+                        break
 
             # Display the squat count
             cv2.putText(frame, f"{self.name} count: {self.count}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)

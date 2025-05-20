@@ -2,6 +2,8 @@
 
 This code uses Python to watch you on your computer's camera and count how many squats you do! It's like having a virtual exercise buddy.
 
+[Mediapipe stable documentation](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=ru)
+
 ## What you need
 
 * **A computer with a camera:** The code uses your computer's camera to see you.
