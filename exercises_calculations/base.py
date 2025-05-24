@@ -12,8 +12,17 @@ import os
 class ExersicesBase():
     def __init__(self,
                  required_count: int = None ,
+                 type:str = "base", 
                  callbacks = []):
         self.name = 'base'
+
+
+        self.type = type
+        """
+        "type" argument Designed to define how much this exercise user will do 
+        base - once every hour 
+        medium - once a day 
+        """
 
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(static_image_mode=False,  # Changed to False for video stream
@@ -33,9 +42,9 @@ class ExersicesBase():
 
         print(config)
         if required_count == None: 
-            self.required_count = random.randint(config['normal_count']-3, config['normal_count']+2)
+            self.required_count = 10
         elif type(required_count) == int: 
-            self.required_count = required_count
+            self.required_count = random.randint(required_count-3, required_count+2)
 
     def visualize_pose(self, frame, results, *args, **kwargs):
         self.mp_drawing.draw_landmarks(frame, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)
@@ -68,7 +77,7 @@ class ExersicesBase():
         history_entry = {
             "type": self.name,
             "timestamp": datetime.now().isoformat(),
-            "exercise": self.name,
+            "exercise": self.type,
             "count": self.count,
             "duration": round(self.end_time - self.start_time, 2) if self.start_time and self.end_time else None
         }
@@ -140,7 +149,7 @@ class ExersicesBase():
                         break
 
             # Display the squat count
-            cv2.putText(frame, f"{self.name} count: {self.count}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.putText(frame, f"{self.name} count: {self.count}/{self.required_count}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
             # Display the resulting frame
             cv2.imshow('Pose Comparison', frame)

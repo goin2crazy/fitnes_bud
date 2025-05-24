@@ -1,4 +1,6 @@
+import os 
 import yaml 
+import json
 import platform
 
 # depends on windows version 
@@ -71,3 +73,10 @@ def send_notification(title, message, emotion=False):
     else:
         print("Info: Notifications are only supported on Windows for now.")
 
+
+def load_exercise_logs():
+    LOG_FILE = load_config()['dataset_path']
+    if not os.path.exists(LOG_FILE):
+        return []
+    with open(LOG_FILE, "r") as f:
+        return json.load(f)

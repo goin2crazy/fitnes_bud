@@ -3,10 +3,14 @@ import random
 import cv2 
 from time import sleep 
 
+global_name = "Squats"
+
 class SquatExsercise(ExersicesBase): 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs) 
-        self.name = 'Squat'
+
+        global global_name
+        self.name = global_name
 
         self.down = False 
         self.up = False 

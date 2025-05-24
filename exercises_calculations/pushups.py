@@ -1,7 +1,8 @@
-from base import ExersicesBase
+from .base import ExersicesBase
 import cv2 
-from angles_calculations import _angle_with_horizontal, _angle_between
+from .angles_calculations import _angle_with_horizontal, _angle_between
 
+global_name = "Push Ups"
 
 def calculate_angles(
     hip: tuple[float, float],
@@ -40,7 +41,9 @@ class PushUpExercise(ExersicesBase):
 
     def __init__(self, visibity_threahold = 0.2, *args, **kwargs, ):
         super().__init__(*args, **kwargs) 
-        self.name = 'Push Ups'
+
+        global global_name
+        self.name = global_name
         self.visibity_threahold = visibity_threahold
 
         self.down = False 

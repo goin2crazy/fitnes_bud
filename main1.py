@@ -1,97 +1,138 @@
-import subprocess
 import time
+import datetime
 import schedule
-import random
 import logging
-import traceback  # Import traceback for detailed error info
+import traceback
 
-from utils import send_notification, load_config
-from network_access import *
+from utils import send_notification, load_config, load_exercise_logs
+from network_access import enable_internet, disable_internet
+from exercises_calculations import available_exercises
 
-# Configure logging
+# --- Logging Setup ---
 logging.basicConfig(
-    level=logging.INFO,  # Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR)
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("app.log"),  # Log to a file
-        logging.StreamHandler()          # Log to the console
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
     ]
 )
 
-# 👉 Your cute little squat function
-def do_squats():
-    try:
-        from exercises_calculations import SquatExsercise
-        logging.info("Starting squats exercise.")
-        send_notification(f"Time for squats, sweetheart! 🍑 Let's go!", "I will watch you anyway. Go on i am counting!", emotion="serious")
-        SquatExsercise().run()
-        logging.info("Squats exercise completed successfully.")
-    except Exception as e:
-        logging.error(f"Error during squats: {e}")
-        logging.error(traceback.format_exc())  # Log the full traceback
+# --- Helper Functions ---
+def run_exercise(exercise_name, count, level, callbacks):
+    if exercise_name not in available_exercises:
+        logging.error(f"Error: '{exercise_name}' is not available.")
+        return
 
-# 🌸 Full rest routine
+    try:
+        ExerciseClass = available_exercises[exercise_name]
+        logging.info(f"Starting {exercise_name} exercise.")
+        send_notification(
+            f"Time for {exercise_name}, sweetheart! 🍑 Let's go!",
+            "I will watch you anyway. Go on I am counting!",
+            emotion="serious"
+        )
+        ExerciseClass(required_count=count, type=level, callbacks=callbacks).run()
+        logging.info(f"{exercise_name} exercise completed successfully.")
+    except Exception as e:
+        logging.error(f"Error during {exercise_name}: {e}")
+        logging.error(traceback.format_exc())
+
+
+def do_level_exercises(level="base", callbacks=[]):
+    config = load_config()
+    exercises = config['normal_count'][level]
+    for item in exercises:
+        run_exercise(item['exercise'], item['count'], level, callbacks)
+
+
+def do_base_level_exercises():
+    do_level_exercises(level="base")
+
+
+def do_mid_level_exercises():
+    do_level_exercises(level="medium")
+
+
+def was_mid_exercise_done_today():
+    today = datetime.date.today()
+    logs = load_exercise_logs()
+    return any(
+        log["type"] == "medium" and datetime.datetime.fromisoformat(log["timestamp"]).date() == today
+        for log in logs
+    )
+
+
+def check_missed_mid_level_execution(scheduled_time):
+    now = datetime.datetime.now()
+    scheduled_dt = datetime.datetime.strptime(
+        f"{now.strftime('%Y-%m-%d')} {scheduled_time}", "%Y-%m-%d %H:%M"
+    )
+    if now >= scheduled_dt and not was_mid_exercise_done_today():
+        logging.warning("😿 Missed scheduled exercise… running it now anyway!")
+        do_mid_level_exercises()
+
+
+# --- Routine Functions ---
 def break_routine():
     try:
         logging.info("Starting break routine.")
-        send_notification("Break Time!", "Internet will be disabled for a bit. Get ready to exercise! 😉", emotion="determined")  # Added image path
+        send_notification("Break Time!", "Internet will be disabled for a bit. Get ready to exercise! 😉", emotion="determined")
         disable_internet()
-        do_squats()
-        send_notification("Break Over", "Welcome back! Internet is re-enabled.", emotion="thankfull")  # Added image path
+        do_base_level_exercises()
+        send_notification("Break Over", "Welcome back! Internet is re-enabled.", emotion="thankfull")
         enable_internet()
         logging.info("Break routine completed successfully.")
     except Exception as e:
         logging.error(f"Error during break routine: {e}")
-        logging.error(traceback.format_exc()) # Log the full traceback
+        logging.error(traceback.format_exc())
+
+
+def send_routine_warning(title, message, emotion):
+    try:
+        logging.info(f"Sending {title.lower()} warning.")
+        send_notification(title, message, emotion=emotion)
+    except Exception as e:
+        logging.error(f"Error sending {title.lower()} warning: {e}")
+        logging.error(traceback.format_exc())
+
 
 def upcoming_break_warning():
-    try:
-        logging.info("Sending upcoming break warning.")
-        send_notification("Upcoming Break", "Get ready for your break in 5 minutes! Stretch a little~",
-                         emotion="warning")  # Added image path
-        logging.info("Upcoming break warning sent.")
-    except Exception as e:
-        logging.error(f"Error sending upcoming break warning: {e}")
-        logging.error(traceback.format_exc())
+    send_routine_warning("Upcoming Break", "Get ready for your break in 5 minutes! Stretch a little~", "warning")
+
 
 def passed_routine_warning():
-    try:
-        logging.info("Sending passed routine warning.")
-        send_notification("How are you feeling?", "Stay concentrated~!",
-                         emotion="proud")  # Added image path
-        logging.info("Passed routine warning sent.")
-    except Exception as e:
-        logging.error(f"Error sending passed routine warning: {e}")
-        logging.error(traceback.format_exc())
+    send_routine_warning("How are you feeling?", "Stay concentrated~!", "proud")
 
 
-
+# --- Main App Entry ---
 if __name__ == "__main__":
     try:
-        # START CODE!!!
         config = load_config()
         logging.info("Configuration loaded.")
 
-        # 🕒 Run every hour
+        # Hourly routines
         schedule.every().hour.at(f":{config['break_time']}").do(break_routine)
-        logging.info(f"Break routine scheduled for every hour at :{config['break_time']}.")
-
-        # ⏰ Schedule a warning 15 minutes before each hourly break
         schedule.every().hour.at(f":{config['reminder_time']}").do(passed_routine_warning)
         schedule.every().hour.at(f":{config['warning_time']}").do(upcoming_break_warning)
-        logging.info(f"Passed routine warning scheduled for every hour at :{config['reminder_time']}.")
-        logging.info(f"Upcoming break warning scheduled for every hour at :{config['warning_time']}.")
 
+        # Daily mid-level exercises
+        schedule.every().day.at(config['medium_level_exercises_time']).do(do_mid_level_exercises)
 
-        # In case if pc left with internet access disabled
+        # Startup
         enable_internet()
-        send_notification("App started", "Assistant is watching the time 🥰 Will make sure you stay healthy & focused~",
-                         emotion="happy")
+        send_notification(
+            "App started",
+            "Assistant is watching the time 🥰 Will make sure you stay healthy & focused~",
+            emotion="happy"
+        )
+        check_missed_mid_level_execution(config['medium_level_exercises_time'])
         logging.info("Application started. Internet enabled, startup notification sent.")
 
         while True:
             schedule.run_pending()
-            time.sleep(config['time_check_rate'])  # Reduced CPU usage from ~100% to near 0%
+            time.sleep(config['time_check_rate'])
+
     except Exception as e:
         logging.critical(f"Unhandled error in main loop: {e}")
-        logging.critical(traceback.format_exc()) # Log the full traceback
+        logging.critical(traceback.format_exc())
