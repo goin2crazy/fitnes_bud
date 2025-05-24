@@ -153,7 +153,11 @@ def change_timings():
             'message': f'An unexpected error occurred: {e}'
         }), 500 # Internal Server Error status code
 
-
+# /exercises_counts_settings
+@app.route('/exercises_counts_settings/', methods=['POST'])
+def change_exercises_counts_settings():
+    # Print the raw request body (as you had before)
+    print("Raw Request Body:", request.data)
 
 
 if __name__ == '__main__':

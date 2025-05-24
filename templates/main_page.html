@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Budy</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif; /* Using Inter, or replace with a preferred font */
-            background-color: #1a202c; /* Soft dark background */
-            color: #e2e8f0; /* Light grey text */
+            background-color: #121212; /* Deeper dark background */
+            color: #e0e0e0; /* Softer light grey text */
             margin: 0;
             padding: 0;
             min-height: 100vh;
@@ -24,50 +24,53 @@
         .container {
             display: flex;
             flex-direction: column;
-            /* width: 100%; */
-            max-width: 800px; /* Max width for larger screens */
-            background-color: #2d3748; /* Slightly lighter dark background for the container */
-            border-radius: 12px; /* Rounded corners */
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+            width: 100%;
+            max-width: 800px; /* Max width for the main container */
+            background-color: #1e1e1e; /* Slightly lighter dark background for the container */
+            border-radius: 16px; /* More rounded corners */
+            padding: 25px; /* Increased padding */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Stronger, softer shadow */
+            margin: 0 auto; /* Center the container */
+            border: 1px solid #333; /* Subtle border */
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #4a5568; /* Soft border */
-            margin-bottom: 20px;
+            padding-bottom: 18px; /* More padding */
+            border-bottom: 1px solid #3a3a3a; /* Softer border */
+            margin-bottom: 25px; /* More margin */
         }
 
         .header-nav a {
-            color: #a0aec0; /* Soft grey for links */
+            color: #a0a0a0; /* Softer grey for links */
             text-decoration: none;
-            margin-right: 20px;
-            transition: color 0.2s ease-in-out;
+            margin-right: 25px; /* More spacing */
+            transition: color 0.3s ease-in-out;
+            font-weight: 400; /* Normal weight */
         }
 
         .header-nav a:hover {
-            color: #e2e8f0; /* Lighter on hover */
+            color: #ffffff; /* Brighter on hover */
         }
 
         .header-close {
-            color: #a0aec0; /* Soft grey for close button */
+            color: #a0a0a0; /* Softer grey for close button */
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.2em;
-            transition: color 0.2s ease-in-out;
+            font-size: 1.3em; /* Slightly larger */
+            transition: color 0.3s ease-in-out;
         }
 
         .header-close:hover {
-             color: #e53e3e; /* Reddish on hover */
+             color: #ff6b6b; /* Soft red on hover */
         }
 
         .main-content-area {
             display: flex;
             flex-direction: column; /* Stack on small screens */
-            gap: 20px; /* Space between main section and sidebar */
+            gap: 30px; /* More space between main section and sidebar */
         }
 
         @media (min-width: 768px) { /* Apply flex layout on medium screens and up */
@@ -83,56 +86,115 @@
 
         .sidebar {
             width: 100%; /* Full width on small screens */
-            border-top: 1px solid #4a5568; /* Soft border on top for small screens */
-            padding-top: 20px;
+            border-top: 1px solid #3a3a3a; /* Softer border on top for small screens */
+            padding-top: 25px; /* More padding */
         }
 
          @media (min-width: 768px) { /* Adjust sidebar width and add left border on medium screens and up */
             .sidebar {
-                width: 250px; /* Adjust width as needed */
+                width: 280px; /* Slightly wider sidebar */
                 border-top: none;
-                border-left: 1px solid #4a5568; /* Soft border on left */
+                border-left: 1px solid #3a3a3a; /* Softer border on left */
                 padding-top: 0;
-                padding-left: 20px;
+                padding-left: 25px; /* More padding */
             }
         }
 
-        h1, h3 {
-            color: #edf2f7; /* Lighter headings */
+        h1 {
+            color: #f0f0f0; /* Brighter heading */
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* More margin */
+            font-weight: 700; /* Bold */
+            font-size: 2.2em; /* Larger */
+        }
+
+        h3 {
+            color: #e0e0e0; /* Slightly brighter subheadings */
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-weight: 600; /* Semi-bold */
         }
 
         .exercise-section {
-            margin-bottom: 30px;
+            margin-bottom: 35px; /* More margin */
         }
 
         .exercise-item {
             display: flex;
+            flex-direction: column; /* Stack display and edit modes */
+            background-color: #282828; /* Darker background for items */
+            padding: 15px; /* More padding */
+            margin-bottom: 12px; /* More margin */
+            border-radius: 10px; /* Softer rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Softer shadow */
+            transition: transform 0.2s ease-in-out; /* Smooth hover effect */
+        }
+
+        .exercise-item:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+        .exercise-content-display, .exercise-content-edit {
+            display: flex;
             align-items: center;
-            background-color: #4a5568; /* Darker background for items */
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 8px; /* Rounded corners for items */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for items */
+            width: 100%; /* Take full width of parent */
+        }
+
+        .exercise-content-edit {
+            gap: 12px; /* More space between edit elements */
+            margin-top: 5px; /* Slight separation from top */
         }
 
         .exercise-name {
-            flex-grow: 1;
             font-weight: 600; /* Semi-bold */
+            color: #f0f0f0; /* Brighter text */
+            flex-grow: 1; /* Allow to grow */
+            margin-right: 15px; /* Space for display mode */
         }
 
-        .required-count {
+        .exercise-select, .required-count-input {
+            font-weight: 400; /* Normal weight */
+            background-color: #3a3a3a; /* Darker background for inputs */
+            color: #e0e0e0;
+            border: 1px solid #555; /* Softer border */
+            padding: 8px 12px; /* More padding */
+            border-radius: 8px; /* More rounded */
+            flex-grow: 1; /* Allow to grow */
+            outline: none; /* Remove outline */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .exercise-select:focus, .required-count-input:focus {
+            border-color: #63b3ed; /* Highlight on focus */
+            box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.3); /* Soft glow */
+        }
+
+        .exercise-select {
+            width: 150px; /* Adjust width for select */
+            padding-right: 30px; /* Space for dropdown arrow */
+            -webkit-appearance: none; /* Remove default arrow */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23e0e0e0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat; /* Ensure no repeat */
+            background-position: right 10px center; /* Adjust arrow position */
+            background-size: 20px; /* Larger arrow */
+        }
+
+        .required-count, .required-count-input {
             margin-right: 15px;
-            color: #a0aec0; /* Soft grey */
-            font-size: 0.9em;
+            color: #b0b0b0; /* Softer grey */
+            font-size: 0.95em; /* Slightly larger */
+            width: 70px; /* Fixed width for count */
+            text-align: center; /* Center text in count input */
         }
 
         .how-to-link a {
             color: #63b3ed; /* Soft blue */
             text-decoration: none;
-            margin-right: 15px;
+            margin-right: 20px; /* More spacing */
             transition: color 0.2s ease-in-out;
+            font-weight: 400;
         }
 
          .how-to-link a:hover {
@@ -140,65 +202,82 @@
          }
 
         .remove-button {
-            color: #fc8181; /* Soft red */
+            color: #ff6b6b; /* Soft red */
             font-weight: bold;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1.2em; /* Slightly larger */
             transition: color 0.2s ease-in-out;
+            margin-left: 15px; /* More space */
         }
 
          .remove-button:hover {
             color: #e53e3e; /* Darker red on hover */
          }
 
+        .edit-exercise-button, .save-exercise-button {
+            background-color: transparent; /* No background */
+            color: #a0a0a0; /* Softer grey icon color */
+            border: none;
+            padding: 6px; /* More padding */
+            border-radius: 6px; /* More rounded */
+            cursor: pointer;
+            font-size: 1.1em; /* Slightly larger icon */
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            margin-left: 15px; /* More space */
+        }
+
+        .edit-exercise-button:hover, .save-exercise-button:hover {
+            color: #63b3ed; /* Soft blue on hover */
+            background-color: rgba(99, 179, 237, 0.1); /* Subtle background on hover */
+        }
+
 
         .exercises-status h3 {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .status-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(20px, 1fr)); /* Responsive grid */
-            gap: 5px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            margin-left: 30px;
-            margin-right: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(24px, 1fr)); /* Slightly larger circles */
+            gap: 10px; /* More gap */
+            margin-top: 15px;
+            margin-bottom: 20px;
         }
 
         .status-circle {
-            width: 15px;
-            height: 15px;
+            width: 24px; /* Slightly larger */
+            height: 24px; /* Slightly larger */
             background-color: #63b3ed; /* Soft blue for status */
             border-radius: 50%;
-            opacity: 0.7; /* Slightly transparent */
+            opacity: 0.8; /* Slightly more opaque */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
         }
 
         .fitness-breaks h3 {
-            margin-top: 25px;
-            margin-bottom: 10px;
+            margin-top: 30px; /* More margin */
+            margin-bottom: 15px;
         }
 
         .legend div {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-            color: #a0aec0; /* Soft grey */
+            margin-bottom: 10px; /* More margin */
+            font-size: 0.95em; /* Slightly larger */
+            color: #b0b0b0; /* Softer grey */
         }
 
         .legend-color {
-            width: 15px;
-            height: 15px;
-            margin-right: 8px;
-            border-radius: 4px; /* Slightly rounded legend colors */
+            width: 18px; /* Larger */
+            height: 18px; /* Larger */
+            margin-right: 10px; /* More margin */
+            border-radius: 6px; /* More rounded */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow */
         }
 
-        
-        .reminder-color { background-color: #fc8181; } /* Soft red */
-        .warning-color { background-color: #f6e05e; } /* Soft yellow */
-        .fitness-break-color { background-color: #68d391; } /* Soft green */
+        .reminder-color { background-color: #ff6b6b; } /* Soft red */
+        .warning-color { background-color: #ffd166; } /* Soft yellow */
+        .fitness-break-color { background-color: #4CAF50; } /* Soft green */
 
         .legend-item-content {
             display: flex;
@@ -210,90 +289,116 @@
         .timing-controls {
             display: flex;
             align-items: center;
-            gap: 5px; /* Space between time/input and button */
+            gap: 8px; /* More space */
         }
 
         .timing-value {
-            font-weight: bold;
+            font-weight: 600; /* Semi-bold */
+            color: #f0f0f0; /* Brighter text */
         }
 
         .edit-button, .save-button {
             background-color: transparent; /* No background */
-            color: #a0aec0; /* Soft grey icon color */
+            color: #a0a0a0; /* Softer grey icon color */
             border: none;
-            padding: 4px;
-            border-radius: 4px;
+            padding: 6px; /* More padding */
+            border-radius: 6px; /* More rounded */
             cursor: pointer;
-            font-size: 1em; /* Icon size */
-            transition: color 0.2s ease-in-out;
+            font-size: 1.1em; /* Slightly larger icon */
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
         }
 
         .edit-button:hover, .save-button:hover {
             color: #63b3ed; /* Soft blue on hover */
+            background-color: rgba(99, 179, 237, 0.1); /* Subtle background on hover */
         }
 
          .timing-input {
-            background-color: #4a5568; /* Darker background for input */
-            color: #e2e8f0; /* Light text for input */
+            background-color: #3a3a3a; /* Darker background for input */
+            color: #e0e0e0; /* Light text for input */
             border: 1px solid #63b3ed; /* Soft blue border */
-            padding: 4px;
-            border-radius: 4px;
-            width: 60px; /* Adjust width as needed */
-            font-size: 0.9em;
+            padding: 6px 10px; /* More padding */
+            border-radius: 6px; /* More rounded */
+            width: 70px; /* Adjust width as needed */
+            font-size: 0.95em; /* Slightly larger */
+            outline: none;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
          }
 
-        .submit-button {
-            background-color: #68d391; /* Soft green */
-            color: #1a202c; /* Dark text */
+         .timing-input:focus {
+             border-color: #90cdf4;
+             box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.3);
+         }
+
+        .submit-button, .add-exercise-button {
+            background: linear-gradient(145deg, #4CAF50, #388e3c); /* Subtle gradient */
+            color: #ffffff; /* White text for contrast */
             border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
+            padding: 12px 20px; /* More padding */
+            border-radius: 10px; /* More rounded */
             cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            margin-top: 20px;
-            transition: background-color 0.2s ease-in-out;
+            font-size: 1.1em; /* Slightly larger font */
+            font-weight: 600; /* Semi-bold */
+            margin-top: 25px; /* More margin */
+            transition: all 0.3s ease-in-out;
+            width: fit-content; /* Adjust width to content */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
         }
 
-        .submit-button:hover {
-            background-color: #48bb78; /* Darker green on hover */
+        .submit-button:hover, .add-exercise-button:hover {
+            background: linear-gradient(145deg, #388e3c, #4CAF50); /* Reverse gradient on hover */
+            transform: translateY(-2px); /* Slight lift */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* Stronger shadow on hover */
         }
-        
-        .submit-button:hover {
-            background-color: #48bb78; /* Darker green on hover */
+
+        .add-exercise-button {
+            font-size: 1.8em; /* Larger for icon */
+            padding: 8px 15px; /* Adjust padding for icon */
+            margin-left: auto; /* Push to right */
+            display: block; /* Ensure it takes full width if needed */
+            border-radius: 50%; /* Make it a circle */
+            width: 45px; /* Fixed width for circle */
+            height: 45px; /* Fixed height for circle */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1; /* Adjust line height for icon centering */
         }
 
 
         .timeline {
             width: 100%;
-            height: 15px;
-            background-color: #4a5568; /* Darker background for timeline */
-            margin-top: 10px;
-            border-radius: 8px; /* Rounded timeline */
+            height: 18px; /* Taller timeline */
+            background-color: #3a3a3a; /* Darker background for timeline */
+            margin-top: 15px; /* More margin */
+            border-radius: 10px; /* More rounded timeline */
             overflow: hidden; /* Hide overflow from colored segments */
             display: flex; /* Use flex for segments */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); /* Inner shadow */
         }
 
          .timeline div {
              height: 100%;
          }
 
-         .timeline .segment-reminder { background-color: #fc8181; width: 20%; } /* Example width */
-         .timeline .segment-warning { background-color: #f6e05e; width: 10%; } /* Example width */
-         .timeline .segment-break { background-color: #68d391; width: 15%; } /* Example width */
+         .timeline .segment-reminder { background-color: #ff6b6b; width: 20%; } /* Example width */
+         .timeline .segment-warning { background-color: #ffd166; width: 10%; } /* Example width */
+         .timeline .segment-break { background-color: #4CAF50; width: 15%; } /* Example width */
          /* Add more segments as needed */
 
          .next-exercise-time {
-             margin-top: 20px;
+             margin-top: 25px; /* More margin */
              font-size: 1em;
-             color: #a0aec0; /* Soft grey */
+             color: #a0a0a0; /* Softer grey */
+             font-weight: 300; /* Lighter weight */
          }
 
          .restart-message {
-             margin-top: 15px;
-             font-size: 0.8em;
-             color: #a0aec0; /* Soft grey */
+             margin-top: 20px; /* More margin */
+             font-size: 0.85em; /* Slightly larger */
+             color: #a0a0a0; /* Softer grey */
              text-align: center;
+             font-weight: 300; /* Lighter weight */
          }
 
     </style>
@@ -314,30 +419,78 @@
             <div class="main-section">
                 <h1>Hello, its is fitness budy :3</h1>
 
-                <div class="exercise-section">
+                <div class="exercise-section" id="base-level-exercises">
                     <h3>Base level exercises (Every hour):</h3>
                     <div class="exercise-item">
-                        <span class="exercise-name">Squats</span>
-                        <span class="required-count">Required count: 10</span>
-                        <span class="how-to-link"><a href="#">How to?</a></span>
-                        <span class="remove-button">X</span>
+                        <div class="exercise-content-display">
+                            <span class="exercise-name">Squats</span>
+                            <span class="required-count">Required count: <span class="count-value">10</span></span>
+                            <span class="how-to-link"><a href="#">How to?</a></span>
+                            <button class="edit-exercise-button" title="Edit Exercise">✎</button>
+                            <span class="remove-button">X</span>
+                        </div>
+                        <div class="exercise-content-edit" style="display: none;">
+                            <select class="exercise-select">
+                                <option value="squats">Squats</option>
+                                <option value="push-ups">Push Ups</option>
+                                <option value="planka">Planka</option>
+                                <option value="lunges">Lunges</option>
+                                <option value="crunches">Crunches</option>
+                            </select>
+                            <input type="number" class="required-count-input" placeholder="Count" value="10">
+                            <button class="save-exercise-button" title="Save Exercise">✔</button>
+                            <span class="remove-button">X</span>
+                        </div>
                     </div>
-                    </div>
+                    <button class="add-exercise-button" data-target-section="base-level-exercises">+</button>
+                </div>
 
-                <div class="exercise-section">
+                <div class="exercise-section" id="mid-level-exercises">
                     <h3>Mid level exercises (Every day):</h3>
                     <div class="exercise-item">
-                        <span class="exercise-name">Planka</span>
-                        <span class="required-count">Required count: 8</span>
-                        <span class="how-to-link"><a href="#">How to?</a></span>
-                        <span class="remove-button">X</span>
+                        <div class="exercise-content-display">
+                            <span class="exercise-name">Planka</span>
+                            <span class="required-count">Required count: <span class="count-value">8</span></span>
+                            <span class="how-to-link"><a href="#">How to?</a></span>
+                            <button class="edit-exercise-button" title="Edit Exercise">✎</button>
+                            <span class="remove-button">X</span>
+                        </div>
+                        <div class="exercise-content-edit" style="display: none;">
+                            <select class="exercise-select">
+                                <option value="squats">Squats</option>
+                                <option value="push-ups">Push Ups</option>
+                                <option value="planka">Planka</option>
+                                <option value="lunges">Lunges</option>
+                                <option value="crunches">Crunches</option>
+                            </select>
+                            <input type="number" class="required-count-input" placeholder="Count" value="8">
+                            <button class="save-exercise-button" title="Save Exercise">✔</button>
+                            <span class="remove-button">X</span>
+                        </div>
                     </div>
                      <div class="exercise-item">
-                        <span class="exercise-name">Push Ups</span>
-                        <span class="required-count">Required count: 8</span> <span class="how-to-link"><a href="#">How to?</a></span>
-                        <span class="remove-button">X</span>
+                        <div class="exercise-content-display">
+                            <span class="exercise-name">Push Ups</span>
+                            <span class="required-count">Required count: <span class="count-value">8</span></span>
+                            <span class="how-to-link"><a href="#">How to?</a></span>
+                            <button class="edit-exercise-button" title="Edit Exercise">✎</button>
+                            <span class="remove-button">X</span>
+                        </div>
+                        <div class="exercise-content-edit" style="display: none;">
+                            <select class="exercise-select">
+                                <option value="squats">Squats</option>
+                                <option value="push-ups">Push Ups</option>
+                                <option value="planka">Planka</option>
+                                <option value="lunges">Lunges</option>
+                                <option value="crunches">Crunches</option>
+                            </select>
+                            <input type="number" class="required-count-input" placeholder="Count" value="8">
+                            <button class="save-exercise-button" title="Save Exercise">✔</button>
+                            <span class="remove-button">X</span>
+                        </div>
                     </div>
-                    </div>
+                    <button class="add-exercise-button" data-target-section="mid-level-exercises">+</button>
+                </div>
             </div>
 
             <div class="sidebar">
@@ -527,6 +680,300 @@
 
                  // You could add a confirmation message here
                 // alert('Timing changes submitted (simulated). Check console for data.');
+            });
+        });
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const timingEditButtons = document.querySelectorAll('.edit-button');
+            const submitTimingButton = document.querySelector('.submit-button');
+            const addExerciseButtons = document.querySelectorAll('.add-exercise-button'); // Select all add buttons
+            const exerciseVariants = ['Squats', 'Planka', 'Push Ups', 'Lunges', 'Crunches']; // More variants
+
+            // --- Timing Edit Functionality ---
+            function createTimingEditInput(currentValue) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.classList.add('timing-input');
+                input.value = currentValue;
+
+                const saveButton = document.createElement('button');
+                saveButton.classList.add('save-button');
+                saveButton.textContent = '✔';
+                saveButton.title = 'Save Timing';
+
+                return { input, saveButton };
+            }
+
+            timingEditButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const timingControls = this.closest('.timing-controls');
+                    const timingValueSpan = timingControls.querySelector('.timing-value');
+                    const currentEditButton = this;
+
+                    const currentTime = timingValueSpan.textContent;
+                    const { input, saveButton } = createTimingEditInput(currentTime);
+
+                    timingValueSpan.style.display = 'none';
+                    currentEditButton.style.display = 'none';
+
+                    timingControls.appendChild(input);
+                    timingControls.appendChild(saveButton);
+
+                    input.focus();
+
+                    saveButton.addEventListener('click', function() {
+                        const newTime = input.value.trim();
+                        timingValueSpan.textContent = newTime;
+
+                        timingValueSpan.style.display = '';
+                        currentEditButton.style.display = '';
+
+                        input.remove();
+                        saveButton.remove();
+                    });
+
+                    input.addEventListener('keypress', function(event) {
+                        if (event.key === 'Enter') {
+                            saveButton.click();
+                        }
+                    });
+                });
+            });
+
+            submitTimingButton.addEventListener('click', function() {
+                const legendItems = document.querySelectorAll('.legend > div');
+                const timingData = {};
+
+                legendItems.forEach(item => {
+                    const breakType = item.dataset.breakType;
+                    const timingValueSpan = item.querySelector('.timing-value');
+                    const timingInput = item.querySelector('.timing-input');
+
+                    let currentTime;
+                    if (timingInput && timingInput.parentNode === item.querySelector('.timing-controls')) {
+                         currentTime = timingInput.value.trim();
+                    } else {
+                         currentTime = timingValueSpan.textContent.trim();
+                    }
+
+                    timingData[breakType] = currentTime;
+                });
+
+                console.log('Simulating sending timing data:', timingData);
+                alert('Timing changes submitted (simulated). Check console for data.');
+            });
+
+            // --- Exercise Management Functionality ---
+
+            // Function to collect all exercise data and send it to the backend
+            function sendExerciseSettings() {
+                const allExerciseItems = document.querySelectorAll('.exercise-item');
+                const exercisesData = [];
+
+                allExerciseItems.forEach(item => {
+                    const displayDiv = item.querySelector('.exercise-content-display');
+                    const editDiv = item.querySelector('.exercise-content-edit');
+
+                    let exerciseName;
+                    let requiredCount;
+
+                    // Determine if currently in display or edit mode
+                    if (displayDiv.style.display !== 'none') {
+                        exerciseName = displayDiv.querySelector('.exercise-name').textContent;
+                        requiredCount = displayDiv.querySelector('.count-value').textContent;
+                    } else {
+                        exerciseName = editDiv.querySelector('.exercise-select').options[editDiv.querySelector('.exercise-select').selectedIndex].textContent;
+                        requiredCount = editDiv.querySelector('.required-count-input').value;
+                    }
+
+                    // Determine the type (base or medium) based on the parent section's ID
+                    const parentSection = item.closest('.exercise-section');
+                    let type = '';
+                    if (parentSection) {
+                        if (parentSection.id === 'base-level-exercises') {
+                            type = 'base';
+                        } else if (parentSection.id === 'mid-level-exercises') {
+                            type = 'medium';
+                        }
+                    }
+
+                    exercisesData.push({
+                        name: exerciseName,
+                        count: parseInt(requiredCount, 10), // Convert count to a number
+                        type: type // Add the type information
+                    });
+                });
+
+                console.log('Sending exercise settings to /exercises_counts_settings:', exercisesData);
+
+                // Simulate fetch request
+                fetch('/exercises_counts_settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(exercisesData),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success sending exercise settings:', data);
+                    // alert('Exercise settings updated successfully!'); // Optional: show success message
+                })
+                .catch(error => {
+                    console.error('Error sending exercise settings:', error);
+                    // alert('Failed to update exercise settings.'); // Optional: show error message
+                });
+            }
+
+
+            // Function to create a new exercise item (for both initial load and new additions)
+            function createExerciseItemElement(exerciseName = 'Squats', requiredCount = 10) {
+                const exerciseItem = document.createElement('div');
+                exerciseItem.classList.add('exercise-item');
+
+                // Display Mode
+                const displayDiv = document.createElement('div');
+                displayDiv.classList.add('exercise-content-display');
+
+                const nameSpan = document.createElement('span');
+                nameSpan.classList.add('exercise-name');
+                nameSpan.textContent = exerciseName;
+
+                const countSpan = document.createElement('span');
+                countSpan.classList.add('required-count');
+                countSpan.innerHTML = `Required count: <span class="count-value">${requiredCount}</span>`;
+
+                const howToLink = document.createElement('span');
+                howToLink.classList.add('how-to-link');
+                howToLink.innerHTML = `<a href="#">How to?</a>`;
+
+                const editExerciseButton = document.createElement('button');
+                editExerciseButton.classList.add('edit-exercise-button');
+                editExerciseButton.title = 'Edit Exercise';
+                editExerciseButton.textContent = '✎';
+
+                const removeButtonDisplay = document.createElement('span');
+                removeButtonDisplay.classList.add('remove-button');
+                removeButtonDisplay.textContent = 'X';
+
+                displayDiv.append(nameSpan, countSpan, howToLink, editExerciseButton, removeButtonDisplay);
+
+                // Edit Mode
+                const editDiv = document.createElement('div');
+                editDiv.classList.add('exercise-content-edit');
+                editDiv.style.display = 'none'; // Hidden by default
+
+                const select = document.createElement('select');
+                select.classList.add('exercise-select');
+                exerciseVariants.forEach(variant => {
+                    const option = document.createElement('option');
+                    option.value = variant.toLowerCase().replace(/\s/g, '-');
+                    option.textContent = variant;
+                    if (variant === exerciseName) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+
+                const requiredCountInput = document.createElement('input');
+                requiredCountInput.type = 'number';
+                requiredCountInput.classList.add('required-count-input');
+                requiredCountInput.placeholder = 'Count';
+                requiredCountInput.value = requiredCount;
+
+                const saveExerciseButton = document.createElement('button');
+                saveExerciseButton.classList.add('save-exercise-button');
+                saveExerciseButton.title = 'Save Exercise';
+                saveExerciseButton.textContent = '✔';
+
+                const removeButtonEdit = document.createElement('span');
+                removeButtonEdit.classList.add('remove-button');
+                removeButtonEdit.textContent = 'X';
+
+                editDiv.append(select, requiredCountInput, saveExerciseButton, removeButtonEdit);
+
+                exerciseItem.append(displayDiv, editDiv);
+
+                return exerciseItem;
+            }
+
+            // Add event listeners for adding new exercise items
+            addExerciseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetSectionId = this.dataset.targetSection;
+                    const targetSection = document.getElementById(targetSectionId);
+                    if (targetSection) {
+                        const newExercise = createExerciseItemElement(); // Create with default values
+                        targetSection.insertBefore(newExercise, this); // Insert before the add button
+                        sendExerciseSettings(); // Send updated settings after adding
+                    }
+                });
+            });
+
+            // Event Delegation for Exercise Editing (Edit Button)
+            document.querySelector('.main-section').addEventListener('click', function(event) {
+                if (event.target.classList.contains('edit-exercise-button')) {
+                    const exerciseItem = event.target.closest('.exercise-item');
+                    const displayDiv = exerciseItem.querySelector('.exercise-content-display');
+                    const editDiv = exerciseItem.querySelector('.exercise-content-edit');
+
+                    const currentName = exerciseItem.querySelector('.exercise-name').textContent;
+                    const currentCount = exerciseItem.querySelector('.count-value').textContent;
+
+                    // Set values in the edit mode elements
+                    // Find the option whose text matches the currentName
+                    const options = editDiv.querySelector('.exercise-select').options;
+                    for (let i = 0; i < options.length; i++) {
+                        if (options[i].textContent === currentName) {
+                            options[i].selected = true;
+                            break;
+                        }
+                    }
+                    editDiv.querySelector('.required-count-input').value = currentCount;
+
+                    displayDiv.style.display = 'none';
+                    editDiv.style.display = 'flex'; // Use flex to align items
+                }
+            });
+
+            // Event Delegation for Exercise Editing (Save Button)
+            document.querySelector('.main-section').addEventListener('click', function(event) {
+                if (event.target.classList.contains('save-exercise-button')) {
+                    const exerciseItem = event.target.closest('.exercise-item');
+                    const displayDiv = exerciseItem.querySelector('.exercise-content-display');
+                    const editDiv = exerciseItem.querySelector('.exercise-content-edit');
+
+                    const newName = editDiv.querySelector('.exercise-select').options[editDiv.querySelector('.exercise-select').selectedIndex].textContent;
+                    const newCount = editDiv.querySelector('.required-count-input').value;
+
+                    // Update display mode elements
+                    displayDiv.querySelector('.exercise-name').textContent = newName;
+                    displayDiv.querySelector('.count-value').textContent = newCount;
+
+                    editDiv.style.display = 'none';
+                    displayDiv.style.display = 'flex'; // Use flex to align items
+
+                    sendExerciseSettings(); // Send updated settings after saving
+                }
+            });
+
+
+            // --- Event Delegation for Remove Buttons (Exercises) ---
+            document.querySelector('.main-section').addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-button')) {
+                    const exerciseItemToRemove = event.target.closest('.exercise-item');
+                    if (exerciseItemToRemove) {
+                        exerciseItemToRemove.remove();
+                        sendExerciseSettings(); // Send updated settings after removing
+                    }
+                }
             });
         });
     </script>
