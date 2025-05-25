@@ -1,21 +1,15 @@
 break_time: '05'
-dataset_path: "exercises_dataset.json"
-
+dataset_path: exercises_dataset.json
+medium_level_exercises_time: '18:55'
 normal_count:
   base:
-    - exercise: "Squats"
-      count: 10
-    - exercise: "Lunges"
-      count: 15
+  - count: 12
+    exercise: Squats
   medium:
-    - exercise: "Push Ups"
-      count: 10
-    - exercise: "Plank"
-      count: 1  # maybe minutes?
-    - exercise: "Burpees"
-      count: 8
-
+  - count: 3
+    exercise: Push Ups
+  - count: 10
+    exercise: Squats
 reminder_time: '25'
 time_check_rate: 25
 warning_time: '55'
-medium_level_exercises_time: "19:30"

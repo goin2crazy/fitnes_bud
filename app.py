@@ -17,18 +17,15 @@ app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 JSON_FILE_PATH = os.path.join(BASE_DIR, 'data.json')
 # --- New function to load activity types ---
-def load_activities_types():
-    """
-    Simulates loading activity types.
-    Returns a dictionary categorizing activities.
-    """
-    return {
-        "Warm-up": ["Jumping Jacks", "Arm Circles", "Leg Swings"],
-        "Strength - Lower Body": ["Squats", "Lunges", "Deadlifts (Bodyweight)"],
-        "Strength - Upper Body": ["Push-ups", "Pull-up Assists", "Dips (Chair)"],
-        "Core": ["Plank", "Crunches", "Russian Twists"],
-        "Cool-down": ["Static Stretching", "Foam Rolling"]
-    }
+def load_activities_types(config):
+
+    # app is supposed to return the informations about exercises sets
+    # And all available in app types of exercises 
+    from exercises_calculations import available_exercises
+
+    return {**config['normal_count'], 
+            'variants': list(available_exercises.keys())}
+    
 
 
 def save_data(data):
@@ -64,13 +61,13 @@ def index():
     #              app_config_data['error_saving'] = "Could not save settings."
 
     activity_colors = load_activity_frequency()
-    activity_categories = load_activities_types()
+    activity_types_counts = load_activities_types(app_config_data)
 
     return render_template(
         'main_page.html',
         app_data=app_config_data,
         activity_frequency_colors=activity_colors,
-        activity_types_data=activity_categories
+        activity_types_data=activity_types_counts
     )
 
 
@@ -158,6 +155,78 @@ def change_timings():
 def change_exercises_counts_settings():
     # Print the raw request body (as you had before)
     print("Raw Request Body:", request.data)
+    request_data = request.get_json()
+
+
+    
+    # Check if JSON data was successfully parsed
+    if request_data is None:
+        return jsonify({
+            'status': 'error',
+            'message': 'Invalid JSON data received. Ensure Content-Type is application/json and body is valid JSON.'
+        }), 400 # Bad Request status code
+
+    print("Parsed Request Data:", request_data)
+
+    try:
+        # --- Configuration Loading and Updating ---
+
+        # Load the current configuration settings using the defined function
+        # The request data in format: 
+        # [{"name":"Squats","count":10,"type":"base"},
+        # {"name":"Planka","count":8,"type":"medium"},
+        # {"name":"Push Ups","count":8,"type":"medium"}]
+
+        config_data_normal_count = {"base": [{"exercise": i['name'], "count": i['count']} for i in request_data if i['type'] =='base'], 
+                                    "medium": [{"exercise": i['name'], "count": i['count']} for i in request_data if i['type'] =='medium']}
+        
+        config = load_config()
+        config['normal_count'] = config_data_normal_count
+        print("Current Config before update:", config)
+
+        # Update config parameters with values from the request data
+        # Ensure keys exist in both request_data and config before updating
+        # Also, consider adding type checking/validation for request_data values
+
+
+        print("Config after update:", config)
+
+        # Save the updated configuration using the defined function
+        save_success = save_config(config)
+
+        # --- End Configuration Loading and Updating ---
+
+        if save_success:
+            # Return a success JSON response
+            return jsonify({
+                'status': 'success',
+                'message': 'Operation done: Config updated and saved.',
+                'updated_config': { # Return the updated values
+                    'break_time': config.get('break_time'),
+                    'warning_time': config.get('warning_time'),
+                    'reminder_time': config.get('reminder_time')
+                }
+            }), 200 # OK status code
+        else:
+             # Return an error if saving failed
+             return jsonify({
+                'status': 'error',
+                'message': 'Config updated but failed to save.',
+                'updated_config': { # Optionally return the updated values even if save failed
+                    'break_time': config.get('break_time'),
+                    'warning_time': config.get('warning_time'),
+                    'reminder_time': config.get('reminder_time')
+                }
+            }), 500 # Internal Server Error status code
+
+
+    except Exception as e:
+        # Catch any unexpected errors during the process
+        print(f"An unexpected error occurred in change_timings: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': f'An unexpected error occurred: {e}'
+        }), 500 # Internal Server Error status code
 
 
 if __name__ == '__main__':

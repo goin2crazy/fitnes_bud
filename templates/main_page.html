@@ -422,20 +422,23 @@
                 <div class="exercise-section" id="base-level-exercises">
                     <h3>Base level exercises (Every hour):</h3>
                     <div class="exercise-item">
+                        {% for i in activity_types_data['base']%}
                         <div class="exercise-content-display">
-                            <span class="exercise-name">Squats</span>
-                            <span class="required-count">Required count: <span class="count-value">10</span></span>
+                            <span class="exercise-name">{{i['exercise']}}</span>
+                            <span class="required-count">Required count: <span class="count-value">{{i['count']}}</span></span>
                             <span class="how-to-link"><a href="#">How to?</a></span>
                             <button class="edit-exercise-button" title="Edit Exercise">✎</button>
                             <span class="remove-button">X</span>
                         </div>
+                        {% endfor %}
                         <div class="exercise-content-edit" style="display: none;">
                             <select class="exercise-select">
-                                <option value="squats">Squats</option>
-                                <option value="push-ups">Push Ups</option>
-                                <option value="planka">Planka</option>
-                                <option value="lunges">Lunges</option>
-                                <option value="crunches">Crunches</option>
+
+                                {%for i in activity_types_data['variants'] %}
+
+                                <option value="{{i}}">{{i}}</option>
+
+                                {% endfor %}
                             </select>
                             <input type="number" class="required-count-input" placeholder="Count" value="10">
                             <button class="save-exercise-button" title="Save Exercise">✔</button>
@@ -448,41 +451,26 @@
                 <div class="exercise-section" id="mid-level-exercises">
                     <h3>Mid level exercises (Every day):</h3>
                     <div class="exercise-item">
+
+                        {% for i in activity_types_data['medium']%}
                         <div class="exercise-content-display">
-                            <span class="exercise-name">Planka</span>
-                            <span class="required-count">Required count: <span class="count-value">8</span></span>
+                            <span class="exercise-name">{{i['exercise']}}</span>
+                            <span class="required-count">Required count: <span class="count-value">{{i['count']}}</span></span>
                             <span class="how-to-link"><a href="#">How to?</a></span>
                             <button class="edit-exercise-button" title="Edit Exercise">✎</button>
                             <span class="remove-button">X</span>
                         </div>
+                        {% endfor %}
+
                         <div class="exercise-content-edit" style="display: none;">
                             <select class="exercise-select">
-                                <option value="squats">Squats</option>
-                                <option value="push-ups">Push Ups</option>
-                                <option value="planka">Planka</option>
-                                <option value="lunges">Lunges</option>
-                                <option value="crunches">Crunches</option>
-                            </select>
-                            <input type="number" class="required-count-input" placeholder="Count" value="8">
-                            <button class="save-exercise-button" title="Save Exercise">✔</button>
-                            <span class="remove-button">X</span>
-                        </div>
-                    </div>
-                     <div class="exercise-item">
-                        <div class="exercise-content-display">
-                            <span class="exercise-name">Push Ups</span>
-                            <span class="required-count">Required count: <span class="count-value">8</span></span>
-                            <span class="how-to-link"><a href="#">How to?</a></span>
-                            <button class="edit-exercise-button" title="Edit Exercise">✎</button>
-                            <span class="remove-button">X</span>
-                        </div>
-                        <div class="exercise-content-edit" style="display: none;">
-                            <select class="exercise-select">
-                                <option value="squats">Squats</option>
-                                <option value="push-ups">Push Ups</option>
-                                <option value="planka">Planka</option>
-                                <option value="lunges">Lunges</option>
-                                <option value="crunches">Crunches</option>
+                                
+                                {%for i in activity_types_data['variants'] %}
+
+                                <option value="{{i}}">{{i}}</option>
+
+                                {% endfor %}
+
                             </select>
                             <input type="number" class="required-count-input" placeholder="Count" value="8">
                             <button class="save-exercise-button" title="Save Exercise">✔</button>

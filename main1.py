@@ -20,13 +20,15 @@ logging.basicConfig(
 
 # --- Helper Functions ---
 def run_exercise(exercise_name, count, level, callbacks):
-    if exercise_name not in available_exercises:
+    if (exercise_name not in list(available_exercises.keys())) or (len(exercise_name) < 2 ):
         logging.error(f"Error: '{exercise_name}' is not available.")
         return
 
     try:
         ExerciseClass = available_exercises[exercise_name]
+
         logging.info(f"Starting {exercise_name} exercise.")
+        print(f"Starting {exercise_name} exercise.")
         send_notification(
             f"Time for {exercise_name}, sweetheart! 🍑 Let's go!",
             "I will watch you anyway. Go on I am counting!",
@@ -42,6 +44,7 @@ def run_exercise(exercise_name, count, level, callbacks):
 def do_level_exercises(level="base", callbacks=[]):
     config = load_config()
     exercises = config['normal_count'][level]
+    print(exercises)
     for item in exercises:
         run_exercise(item['exercise'], item['count'], level, callbacks)
 
